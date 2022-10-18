@@ -1,6 +1,6 @@
+from pprint import pprint
 import gspread
 from google.oauth2.service_account import Credentials
-from pprint import pprint
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -15,12 +15,12 @@ SHEET = GSPREAD_CLIENT.open('love_sandwiches')
 
 
 def get_sales_data():
-    """
-    Get sales figures from the user.
-    Run a while loop to collect a valid string of data from the user
-    via the terminal, which must be a string of 6 numbers, separated
-    by commas. The loop will repeatedly request data, until it is valid.
-    """
+    '''
+        Get sales figures from the user.
+        Run a while loop to collect a valid string of data from the user
+        via the terminal, which must be a string of 6 numbers, separated
+        by commas. The loop will repeatedly request data, until it is valid.
+    '''
 
     while True:           
         print("Please enter sales data from the last market.")
@@ -40,11 +40,11 @@ def get_sales_data():
 
 
 def validate_data(values):
-    """
-    Inside the try, converts all string values into integers.
-    Raises ValueError if strings cannot be converted into int,
-    or if there aren't exactly 6 values.
-    """
+    '''
+        Inside the try, converts all string values into integers.
+        Raises ValueError if strings cannot be converted into int,
+        or if there aren't exactly 6 values.
+    '''
 
     try:
         [int(value) for value in values]
@@ -61,12 +61,13 @@ def validate_data(values):
 
 
 # **************************************************************************************
-# *** Both functions combined into one at line 86: update_worksheet(data, worksheet) ***
+# *** Both functions combined into one 
+# *** at line 87: update_worksheet(data, worksheet)
 # **************************************************************************************
 # def update_sales_worksheet(data):
-#     """"
-#     Update sales worksheet, add new row with the list data provided.
-#     """
+#     '''
+    #     Update sales worksheet, add new row with the list data provided.
+#     '''
 #     print("Updating sales worksheet...\n")
 #     sales_worksheet = SHEET.worksheet("sales")
 #     sales_worksheet.append_row(data)
@@ -74,9 +75,9 @@ def validate_data(values):
 
 
 # def update_surplus_worksheet(data):
-#     """"
-#     Update surplus worksheet, add new row with the list data generated.
-#     """
+#     '''
+    #     Update surplus worksheet, add new row with the list data generated.
+#     '''
 #     print("Updating surplus worksheet...\n")
 #     surplus_worksheet = SHEET.worksheet("surplus")
 #     surplus_worksheet.append_row(data)
@@ -84,10 +85,10 @@ def validate_data(values):
 
 
 def update_worksheet(data, worksheet):
-    """
-    Receives a list of integers to be inserted into a worksheet
-    Update the relevant worksheet with the data provided
-    """
+    '''
+        Receives a list of integers to be inserted into a worksheet
+        Update the relevant worksheet with the data provided
+    '''
     print(f"Updating {worksheet} worksheet...\n")
     worksheet_to_update = SHEET.worksheet(worksheet)
     worksheet_to_update.append_row(data)
@@ -95,13 +96,13 @@ def update_worksheet(data, worksheet):
 
 
 def calulate_surplus_data(sales_row):
-    """
-    Compare sales with stock and calculate the surplus for each item type.
+    '''
+        Compare sales with stock and calculate the surplus for each item type.
 
-    The surplus is defined as the sales figure subtracted from the stock:
-    - Positive surplus indicates waste
-    - Negative surplus indicates extra made when stock was sold out.
-    """
+        The surplus is defined as the sales figure subtracted from the stock:
+        - Positive surplus indicates waste
+        - Negative surplus indicates extra made when stock was sold out.
+    '''
     print("Calculating surplus data...\n")
     stock = SHEET.worksheet("stock").get_all_values()
     stock_row = stock[-1]
@@ -114,10 +115,26 @@ def calulate_surplus_data(sales_row):
     return surplus_data
 
 
+def get_last_5_entries_sales():
+    '''
+        Collects columns of data from sales worksheet, collecting
+        the last 5 entries for each sandwich and returns the data
+        as a list of lists
+    '''
+    sales = SHEET.worksheet("sales")
+
+    columns = []
+    for ind in range(1, 7):
+        column = sales.col_values(ind)
+        columns.append(column[-5:])
+
+    return columns
+
+
 def main():
-    """
-    Run all program functions
-    """
+    '''
+        Run all program functions
+    '''
     data = get_sales_data()
     sales_data = [int(num) for num in data]
     update_worksheet(sales_data, "sales")
@@ -127,4 +144,6 @@ def main():
 
 
 print("\n*** Welcome to Love Sandwiches Data Automation ***\n")
-main()
+# main()
+
+sales_columns = get_last_5_entries_sales()
